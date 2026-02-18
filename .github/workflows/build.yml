@@ -1,5 +1,9 @@
 name: CheckUp Requide Build
 
+permissions:
+  contents: write
+
+
 on:
   push:
     paths:
