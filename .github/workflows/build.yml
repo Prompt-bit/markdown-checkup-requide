@@ -1,13 +1,12 @@
 name: CheckUp Requide Build
 
-permissions:
-  contents: write
-
-
 on:
   push:
     paths:
-      - '**.cqr'
+      - "*.cqr"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -20,18 +19,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
-      - name: Convert .cqr files
+      - name: Convert .cqr to HTML
         run: |
-          for file in $(find . -name "*.cqr"); do
-            python convert.py "$file" "${file%.cqr}.html"
-          done
+          python checkup.py
 
       - name: Commit generated HTML
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Auto-generate HTML from CheckUp Requide" || echo "No changes"
+          git config user.email "github-actions@github.com"
+          git add *.html
+          git commit -m "Auto-generate HTML from CheckUp Requide" || echo "No changes to commit"
+          git pull --rebase
           git push
