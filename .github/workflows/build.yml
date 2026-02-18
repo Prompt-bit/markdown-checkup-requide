@@ -1,0 +1,33 @@
+name: CheckUp Requide Build
+
+on:
+  push:
+    paths:
+      - '**.cqr'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Convert .cqr files
+        run: |
+          for file in $(find . -name "*.cqr"); do
+            python convert.py "$file" "${file%.cqr}.html"
+          done
+
+      - name: Commit generated HTML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Auto-generate HTML from CheckUp Requide" || echo "No changes"
+          git push
